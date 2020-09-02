@@ -1,4 +1,4 @@
-
+#+STARTUP: showall hidestars
 
 * Lesson 1
   Journey to being a better emacs user
