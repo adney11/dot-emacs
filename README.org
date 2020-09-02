@@ -1,0 +1,18 @@
+
+
+* Lesson 1
+  Journey to being a better emacs user
+  - Made some changes to init.el
+  - setup and install melpa
+* Lesson 2
+  - reviewed init.el
+  - Learned how to insert a link
+    [[https://www.google.com][Click here to open Google]]
+  - Learned how to fold titles in org mode
+  - Made readme.org, to document this journey
+  - C-x C-L to insert link
+  - C-x C-o to open link on default browser
+  - Tab on title line, to fold
+  - Alt + <ARROW> to change order of titles
+** Subtitle
+   Hey this is a subtitle for Lesson 2
