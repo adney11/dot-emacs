@@ -17,3 +17,10 @@
   - Alt + <ARROW> to change order of titles
 ** Part 2 - Subtitle Example
    Hey this is a subtitle for Lesson 2
+* Lesson 3
+  - Everything in emacs is a function - elisp
+  - (function-name) -> then use C-x C-e to run this line
+  - eg: (setq v 100) -> will set v to value 100
+  - eg: (eval-last-sexp) -> will evaluate the last expression
+  - M-x view-lossage -> shows history of commands used
+  - Editted init.el to remove toolbar

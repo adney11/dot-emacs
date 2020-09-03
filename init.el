@@ -3,6 +3,7 @@
 ; Emacs executes this file whenever it is launched.
 ;=======================================================================
 (setq inhibit-startup-message t)
+(tool-bar-mode -1)
 
 (require 'package)
 (setq package-enable-at-startup nil)
@@ -25,6 +26,12 @@
              :ensure t
              :config
              (which-key-mode))
+
+;; Org Mode stuff
+(use-package org-bullets
+  :ensure t
+  :config
+  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
 ;-----------------------------------------------------------------------
 (defvar myPackages
   '(elpy))
