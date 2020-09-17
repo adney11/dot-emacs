@@ -3,6 +3,7 @@
 ; Emacs executes this file whenever it is launched.
 ;=======================================================================
 (setq inhibit-startup-message t)
+(setq inhibit-compacting-font-caches t)
 (tool-bar-mode -1)
 
 (require 'package)
@@ -32,6 +33,7 @@
   :ensure t
   :config
   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+(require 'ox-md)
 
 (setq indo-enable-flex-matching t)
 (setq ido-everywhere t)
@@ -330,7 +332,7 @@
  '(inhibit-startup-screen t)
  '(package-selected-packages
    (quote
-    (counsel ace-window skewer-mode elpy impatient-mode smart-compile zenburn-theme)))
+    (csharp-mode counsel ace-window skewer-mode elpy impatient-mode smart-compile zenburn-theme)))
  '(show-paren-mode t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
