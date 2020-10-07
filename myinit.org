@@ -1,0 +1,233 @@
+#+STARTIP: overview
+* interface tweaks
+#+BEGIN_SRC emacs-lisp
+(setq inhibit-startup-message t)
+(setq inhibit-compacting-font-caches t)
+(tool-bar-mode -1)
+(fset 'yes-or-no-p 'y-or-n-p)
+(global-set-key (kbd "<f5>") 'revert-buffer)
+#+END_SRC
+
+* general emacs settings
+  #+BEGIN_SRC emacs-lisp
+  (setq-default make-backup-files nil) ;; doesn't make backups
+  (xterm-mouse-mode 1) ;; allows for mouse use
+  (setq transient-mark-mode t)
+  (setq scroll-step 1) ;; scrolls 1 line at a time
+  (set-scroll-bar-mode `right)
+  #+END_SRC
+* try
+  Let's us try a particular package without actually installing it permanently
+  #+BEGIN_SRC emacs-lisp
+  (use-package try
+  :ensure t)
+  #+END_SRC
+
+* which key
+  #+BEGIN_SRC emacs-lisp
+  (use-package which-key
+  :ensure t
+  :config
+  (which-key-mode))
+  #+END_SRC
+* org mode stuff
+  #+BEGIN_SRC emacs-lisp
+  ;; Org Mode stuff
+  (use-package org-bullets
+  :ensure t
+  :config
+  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+  (require 'ox-md)
+
+  (setq indo-enable-flex-matching t)
+  (setq ido-everywhere t)
+  (ido-mode 1)
+
+  (defalias 'list-buffers 'ibuffer)
+  ;; if you want in other window, then uncomment below line
+  ;; (defalias 'list-buffers 'ibuffer-other-window)
+
+  ; if you want tab bar
+  ;(use-package tabbar
+  ;  :ensure t
+  ;  :config
+  ;  (tabbar-mode 1))
+  #+END_SRC
+* ace-window
+  clean window package
+  #+BEGIN_SRC emacs-lisp
+  (use-package ace-window
+  :ensure t
+  :init
+  (progn
+  (global-set-key [remap other-window] 'ace-window)
+  (custom-set-faces
+  '(aw-leading-char-face
+  ((t (:inherit ace-jump-face-foreground :height 3.0)))))
+  ))
+  #+END_SRC
+
+* code completion and search
+  All packages required for clean search and code completion
+  #+BEGIN_SRC emacs-lisp
+  (use-package counsel
+  :ensure t
+  )
+
+  (use-package ivy
+  :ensure t
+  :diminish (ivy-mode)
+  :bind (("C-x b" . ivy-switch-buffer))
+  :config
+  (ivy-mode 1)
+  (setq ivy-use-virtual-buffers t)
+  (setq ivy-display-style 'fancy))
+
+  (use-package swiper
+  :ensure try
+  :bind (("C-s" . swiper)
+  ("C-r" . swiper)
+  ("C-c C-r" . ivy-resume)
+         ("M-x" . counsel-M-x)
+         ("C-x C-f" . counsel-find-file))
+         :config
+         (progn
+         (ivy-mode 1)
+         (setq ivy-use-virtual-buffers t)
+         (setq ivy-display-style 'fancy)
+         (define-key read-expression-map (kbd "C-r") 'counsel-expression-history)
+         ))
+
+         (use-package avy
+         :ensure t
+         :bind ("M-s" . avy-goto-char))
+
+         (use-package auto-complete
+         :ensure t
+         :init
+         (progn
+         (ac-config-default)
+         (global-auto-complete-mode t)
+         ))
+  #+END_SRC
+* Themes and fonts
+  various cosmetic preferences
+  #+BEGIN_SRC emacs-lisp
+  (use-package zenburn-theme
+  :ensure t
+  :config (load-theme 'zenburn t))
+  #+END_SRC
+
+* custom shortcuts
+  #+BEGIN_SRC emacs-lisp
+  (defun cpp-quick-compile()
+  (interactive)
+  (defvar foo)
+  (setq foo (concat "g++ " (buffer-name)))
+  (shell-command foo)
+  )
+  (global-set-key [(f6)] 'cpp-quick-compile)
+  (global-set-key "\C-xw" 'delete-trailing-whitespace)
+  (global-set-key "\C-xl" 'goto-line)
+
+  ; Bind the "Control-x p" key sequence to the function "indent-all".
+  ; The "indent-all" function indents all lines of the C program in the
+  ; current buffer according to the selected indentation style.
+  (defun indent-all()
+  (interactive)
+  (save-excursion
+  (let ()
+  (goto-char (point-min))
+  (while (< (point) (point-max))
+  (c-indent-command)
+  (next-line 1))))
+  (delete-trailing-whitespace))
+  (global-set-key "\C-xp" 'indent-all)
+  #+END_SRC
+
+  #+BEGIN_SRC emacs-lisp
+  (global-set-key "\C-x\C-u" 'shell)
+  (define-key global-map (kbd "RET") 'newline-and-indent)
+  #+END_SRC
+
+* Language Based settings
+** Common
+  #+BEGIN_SRC emacs-lisp
+  (require 'linum)
+  (global-set-key "\C-xn" 'linum-mode) ;; show/hide col numbers
+  (electric-pair-mode 1) ;; auto-close brackets
+  (setq-default show-trailing-whitespace t) ;; show trailing whitespace
+  (setq column-number-mode t) ;; show col-no in status bar
+  (global-font-lock-mode t) ;; turn on font highlighting
+  (show-paren-mode t) ;; shows matching parenthesis highlighting
+  #+END_SRC
+** C
+   #+BEGIN_SRC emacs-lisp
+   (setq-default c-basic-offset 4)
+   (setq c-default-style "ellemtel")
+   (defalias 'gdb 'gud-gdb)
+   #+END_SRC
+** Processing
+   #+BEGIN_SRC emacs-lisp
+   (use-package processing-mode
+   :ensure t
+   :config
+   (progn
+   (setq processing-location "C:/Users/AdneyLaptop/Desktop/processing-3.5.4/processing-java.exe")
+   (setq processing-application-dir "C:/Users/AdneyLaptop/Desktop/processing-3.5.4/processing.exe")
+   (setq processing-sketchbook-dir "C:/Adney/coding/ProcessingStuff")
+   ))
+   #+END_SRC
+** Python
+** Javascript
+** ASM
+   #+BEGIN_SRC emacs-lisp
+   (require 'asm-mode)
+   (defun my-custom-asm-mode()
+   (interactive)
+   (setq indent-tabs-mode nil)
+   (setq tab-width 4)
+   (setq tab-always-indent nil)
+   (electric-indent-mode -1)
+   (setq tab-stop-list '(4 12 50)))
+   (add-hook 'asm-mode-hook 'my-custom-asm-mode)
+
+   (define-key asm-mode-map (kbd "<ret>") 'newline-and-ident)
+   (define-key asm-mode-map (kbd "M-.") 'helm-etags-select)
+   #+END_SRC
+* rest
+  #+BEGIN_SRC emacs-lisp
+
+  ; Bind the Home and End keys for PuTTY.
+  (global-set-key "\C-[[1~" 'beginning-of-line)
+  (global-set-key "\C-[[4~" 'end-of-line)
+
+  ; Bind the Home and End keys for the Linux GNOME Terminal.
+  (global-set-key "\C-[OH" 'beginning-of-line)
+  (global-set-key "\C-[OF" 'end-of-line)
+
+  ;-----------------------------------------------------------------------
+
+  ; Indent using spaces instead of tabs, but not in makefile-mode.
+  (defun myIndentUsingSpaces () (setq indent-tabs-mode nil))
+  (add-hook 'text-mode-hook 'myIndentUsingSpaces)
+  (add-hook 'c-mode-hook 'myIndentUsingSpaces)
+  (add-hook 'c++-mode-hook 'myIndentUsingSpaces)
+  (add-hook 'asm-mode-hook 'myIndentUsingSpaces)
+  (add-hook 'java-mode-hook 'myIndentUsingSpaces)
+  (add-hook 'python-mode-hook 'myIndentUsingSpaces)
+  (add-hook 'emacs-lisp-mode-hook 'myIndentUsingSpaces)
+
+  ;-----------------------------------------------------------------------
+
+  ; Open go-mode on opening .go files
+  (add-to-list 'load-path "~/emacs/go-mode.el/")
+  (autoload 'go-mode "go-mode" nil t)
+  (add-to-list 'auto-mode-alist '("\\.go\\'" . go-mode))
+
+  ;-----------------------------------------------------------------------
+
+  ; Run go fmt on save for .go files
+  (add-hook 'before-save-hook #'gofmt-before-save)
+
+  #+END_SRC

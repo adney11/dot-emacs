@@ -32,13 +32,28 @@
   - can infact use C-x b to open a new buffer, do whatevre, and then can save into a file
   - C-x C-b will show a list of open buffers
   - C-x b ? will show list of available buffers in short form
-  - made some changes to init.el file - to add new buffer listing, and optional tab bar 
+  - made some changes to init.el file - to add new buffer listing, and optional tab bar
 * Lesson 5
   Windows
   - window is a pane in emacs
   - C-x 2/3/1 (horizontal/vertical/one window)
   - C-x o -> to switch between windows (added ace-window functionality in init.el)
 * Lesson 6
-Search (Swiper)
+  Search (Swiper)
  - Installed swiper - better search than I-search
  - changed init.el to reflect this change, installed counsel and swiper
+* Lesson 7
+  Avy (jumping to chars)
+  - Cleaned up swiper to bind to C-s
+  - Added Avy to search for chars, binded to M-s
+* Lesson 8
+  Autocomplete
+  - added package "auto-complete" for emacs
+  - maybe check out company mode
+* Lesson 9
+  Themes - already done, using zenburn-theme currently
+* Lesson 10
+  - Using org file for a well formatted init file
+  - Using org-babel-laod-file to load myinit.org which has elisp code blocks
+    seperated into nice orgranised blocks
+
