@@ -189,6 +189,25 @@
   (global-font-lock-mode t) ;; turn on font highlighting
   (show-paren-mode t) ;; shows matching parenthesis highlighting
   #+END_SRC
+
+  Code template binding - binding it to f7 to insert Python code template for now <2021-04-20 Tue>
+  Will change for other languages later.
+  #+BEGIN_SRC emacs-lisp
+    (define-skeleton python-skeleton-starter
+      "Inserts common imports and if __name__ line" nil
+      "import os\n"
+      "import sys\n"
+      "import json\n"
+      \n
+      "if __name__ == '__main__':\n"
+      > _)
+
+    (global-set-key [f7] 'python-skeleton-starter)
+  #+END_SRC
+
+  #+RESULTS:
+  : python-skeleton-starter
+
 ** C
    #+BEGIN_SRC emacs-lisp
    (setq-default c-basic-offset 4)
