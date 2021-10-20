@@ -1,3 +1,4 @@
+
 #+STARTIP: overview
 * interface tweaks
 #+BEGIN_SRC emacs-lisp
@@ -14,12 +15,29 @@
   #+END_SRC
 * general emacs settings
   #+BEGIN_SRC emacs-lisp
-  (setq-default make-backup-files nil) ;; doesn't make backups
-  (xterm-mouse-mode 1) ;; allows for mouse use
-  (setq transient-mark-mode t)
-  (setq scroll-step 1) ;; scrolls 1 line at a time
-  (set-scroll-bar-mode `right)
+    (setq-default make-backup-files nil) ;; doesn't make backups
+    (xterm-mouse-mode 1) ;; allows for mouse use
+    (setq transient-mark-mode t)
+    (setq scroll-step 1) ;; scrolls 1 line at a time
+    (set-scroll-bar-mode `right)
+    (add-to-list 'load-path "~/.emacs.d/ivylang/")
+
+    ; Bright-red TODOs
+    (setq fixme-modes '(c++-mode c-mode emacs-lisp-mode))
+    (make-face 'font-lock-fixme-face)
+    (make-face 'font-lock-note-face)
+    (mapc (lambda (mode)
+            (font-lock-add-keywords
+             mode
+             '(("\\<\\(TODO\\)" 1 'font-lock-fixme-face t)
+               ("\\<\\(NOTE\\)" 1 'font-lock-note-face t))))
+          fixme-modes)
+    (modify-face 'font-lock-fixme-face "Red" nil nil t nil t nil nil)
+    (modify-face 'font-lock-note-face "Dark Green" nil nil t nil t nil nil)
   #+END_SRC
+
+  #+RESULTS:
+
 * try
   Let's us try a particular package without actually installing it permanently
   #+BEGIN_SRC emacs-lisp
@@ -214,6 +232,55 @@
    (setq c-default-style "ellemtel")
    (defalias 'gdb 'gud-gdb)
    #+END_SRC
+   #+BEGIN_SRC emacs-lisp
+
+     (setq casey-makescript "build.bat")
+     (setq compilation-context-lines 0)
+     (setq compilation-error-regexp-alist
+         (cons '("^\\([0-9]+>\\)?\\(\\(?:[a-zA-Z]:\\)?[^:(\t\n]+\\)(\\([0-9]+\\)) : \\(?:fatal error\\|warnin\\(g\\)\\) C[0-9]+:" 2 3 nil (4))
+          compilation-error-regexp-alist))
+
+     (defun find-project-directory-recursive ()
+       "Recursively search for a makefile."
+       (interactive)
+       (if (file-exists-p casey-makescript) t
+           (cd "../")
+           (find-project-directory-recursive)))
+
+     (defun lock-compilation-directory ()
+       "The compilation process should NOT hunt for a makefile"
+       (interactive)
+       (setq compilation-directory-locked t)
+       (message "Compilation directory is locked."))
+
+     (defun unlock-compilation-directory ()
+       "The compilation process SHOULD hunt for a makefile"
+       (interactive)
+       (setq compilation-directory-locked nil)
+       (message "Compilation directory is roaming."))
+
+     (defun find-project-directory ()
+       "Find the project directory."
+       (interactive)
+       (setq find-project-from-directory default-directory)
+       (switch-to-buffer-other-window "*compilation*")
+       (if compilation-directory-locked (cd last-compilation-directory)
+       (cd find-project-from-directory)
+       (find-project-directory-recursive)
+       (setq last-compilation-directory default-directory)))
+
+     (defun make-without-asking ()
+       "Make the current build."
+       (interactive)
+       (if (find-project-directory) (compile casey-makescript))
+       (other-window 1))
+     (define-key global-map "\em" 'make-without-asking)
+
+   #+END_SRC
+
+   #+RESULTS:
+   : make-without-asking
+
 ** Processing
    #+BEGIN_SRC emacs-lisp
    (use-package processing-mode
@@ -283,3 +350,11 @@
   #+BEGIN_SRC emacs-lisp
   (find-file "~/todo.org")
   #+END_SRC
+* ivylang
+  #+BEGIN_SRC emacs-lisp
+    (add-to-list 'auto-mode-alist '("\\.ivy\\'" . ivylang-mode))
+    (autoload 'ivylang-mode "ivylang-mode.el" "Major mode for editing Ivylang code" t)
+  #+END_SRC
+
+  #+RESULTS:
+* testing
