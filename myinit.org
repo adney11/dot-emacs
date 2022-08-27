@@ -1,13 +1,22 @@
-
 #+STARTIP: overview
-* interface tweaks
-#+BEGIN_SRC emacs-lisp
-(setq inhibit-startup-message t)
-(setq inhibit-compacting-font-caches t)
-(tool-bar-mode -1)
-(fset 'yes-or-no-p 'y-or-n-p)
-(global-set-key (kbd "<f5>") 'revert-buffer)
-#+END_SRC
+
+* startup and interface tweaks
+  #+BEGIN_SRC emacs-lisp
+    (setq inhibit-startup-echo-area-message "adney")
+    (setq inhibit-startup-message 't)
+    (setq initial-major-mode 'fundamental-mode)
+    (setq initial-scratch-message 'nil)
+    (setq inhibit-compacting-font-caches t)
+    (setq-default line-spacing 8)
+    (tool-bar-mode -1)
+    (menu-bar-mode -1)
+    (fset 'yes-or-no-p 'y-or-n-p)
+    (global-set-key (kbd "<f5>") 'revert-buffer)
+  #+END_SRC
+
+  #+RESULTS:
+  : revert-buffer
+
 * Personal Information
   #+BEGIN_SRC emacs-lisp
     (setq user-full-name "Adney Cardoza"
@@ -23,27 +32,23 @@
     (add-to-list 'load-path "~/.emacs.d/ivylang/")
 
     ; Bright-red TODOs
-    (setq fixme-modes '(c++-mode c-mode emacs-lisp-mode))
+    (setq fixme-modes '(c++-mode c-mode emacs-lisp-mode ivylang-mode python-mode))
     (make-face 'font-lock-fixme-face)
     (make-face 'font-lock-note-face)
+    (make-face 'font-lock-standby-face)
     (mapc (lambda (mode)
             (font-lock-add-keywords
              mode
              '(("\\<\\(TODO\\)" 1 'font-lock-fixme-face t)
-               ("\\<\\(NOTE\\)" 1 'font-lock-note-face t))))
+               ("\\<\\(NOTE\\)" 1 'font-lock-note-face t)
+               ("\\<\\(STANDBY\\)" 1 'font-lock-standby-face t))))
           fixme-modes)
     (modify-face 'font-lock-fixme-face "Red" nil nil t nil t nil nil)
-    (modify-face 'font-lock-note-face "Dark Green" nil nil t nil t nil nil)
+    (modify-face 'font-lock-note-face "Light Green" nil nil t nil t nil nil)
+    (modify-face 'font-lock-standby-face "Orange" nil nil t nil t nil nil)
   #+END_SRC
 
   #+RESULTS:
-
-* try
-  Let's us try a particular package without actually installing it permanently
-  #+BEGIN_SRC emacs-lisp
-  (use-package try
-  :ensure t)
-  #+END_SRC
 
 * which key
   #+BEGIN_SRC emacs-lisp
@@ -52,40 +57,78 @@
       :config
       (which-key-mode))
   #+END_SRC
-* org mode stuff
+
+* try
+  Let's us try a particular package without actually installing it permanently
   #+BEGIN_SRC emacs-lisp
-    ;; Org Mode stuff
-    (use-package org-bullets
+  (use-package try
+  :ensure t)
+  #+END_SRC
+* org mode stuff
+Org Commands that make my life easier - supposedly.
+#+begin_src emacs-lisp
+  (global-set-key (kbd "C-c l") #'org-store-link)
+  (global-set-key (kbd "C-c a") #'org-agenda)
+  (global-set-key (kbd "C-c c") #'org-capture)
+  (global-set-key (kbd "C-x n w") #'widen)
+#+end_src
+
+Other org stuff - that's self explanatory - I'm just lazy to write
+that up rn.
+#+BEGIN_SRC emacs-lisp
+  ;; Org Mode stuff
+  (setq org-hide-emphasis-markers t)
+  (setq org-startup-indented t)
+  (setq org-pretty-entities t)
+  (setq org-startup-with-inline-images t)
+  (setq org-image-actual-width '(300))
+  (setf (cdr (assoc 'file org-link-frame-setup)) 'find-file)
+  (setq-default org-display-custom-times t)
+  (setq org-time-stamp-custom-formats '("<%b %e, %G (%a)>"))
+  ;;(setq org-default-notes-file (concat org-directory "~/captured_notes.org"))
+
+  (use-package org-superstar
     :ensure t
     :config
-    (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
-    (require 'ox-md)
+    (setq org-superstar-special-todo-items t)
+    :hook
+    (org-mode . org-superstar-mode))
 
-    (setq indo-enable-flex-matching t)
-    (setq ido-everywhere t)
-    (ido-mode 1)
+  (setq ido-enable-flex-matching t)
+  (setq ido-everywhere t)
+  (ido-mode 1)
 
-    (setq org-html-validation-link nil)
+  (setq org-html-validation-link nil)
 
-    (defalias 'list-buffers 'ibuffer)
-    ;; if you want in other window, then uncomment below line
-    ;; (defalias 'list-buffers 'ibuffer-other-window)
+  (defalias 'list-buffers 'ibuffer)
 
-    ; if you want tab bar
-    ;(use-package tabbar
-    ;  :ensure t
-    ;  :config
-    ;  (tabbar-mode 1))
-  #+END_SRC
+  (setq org-list-allow-alphabetical t)
+  ;; if you want in other window, then uncomment below line
+  ;; (defalias 'list-buffers 'ibuffer-other-window)
 
+  ; if you want tab bar
+  ;(use-package tabbar
+  ;  :ensure t
+  ;  :config
+  ;  (tabbar-mode 1))
+#+END_SRC
   #+RESULTS:
-  : list-buffers
+  : t
 
   Adding some custom todo states
   #+BEGIN_SRC emacs-lisp
     (setq org-todo-keywords
           '((sequence "TODO(t)" "ONGOING(o)" "SOMEDAY(s)" "DONE(d)")))
   #+END_SRC
+
+** Org Agenda
+   #+BEGIN_SRC emacs-lisp
+     (global-set-key (kbd "C-c a") 'org-agenda)
+   #+END_SRC
+
+   #+RESULTS:
+   : org-agenda
+
 * ace-window
   clean window package
   #+BEGIN_SRC emacs-lisp
@@ -100,18 +143,7 @@
     ))
   #+END_SRC
 * reveal.js and org-reveal
-  Allows for easy editting for reveal.js presentations
-  #+BEGIN_SRC emacs-lisp
-    (use-package ox-reveal
-      :ensure ox-reveal)
-
-    (setq org-reveal-root "https://cdn.jsdelivr.net/npm/reveal.js")
-    (setq org-reveal-mathjax t)
-    (use-package htmlize
-      :ensure t)
-  #+END_SRC
-
-  #+RESULTS:
+Nothing here yet
 
 * code completion and search
   All packages required for clean search and code completion
@@ -159,10 +191,12 @@
 * Themes and fonts
   various cosmetic preferences
   #+BEGIN_SRC emacs-lisp
-  (use-package zenburn-theme
-  :ensure t
-  :config (load-theme 'zenburn t))
+    (load-theme 'spacemacs-dark t)
+    (require 'org-tempo)
   #+END_SRC
+
+  #+RESULTS:
+  : t
 
 * custom shortcuts
   #+BEGIN_SRC emacs-lisp
@@ -206,7 +240,11 @@
   (setq column-number-mode t) ;; show col-no in status bar
   (global-font-lock-mode t) ;; turn on font highlighting
   (show-paren-mode t) ;; shows matching parenthesis highlighting
+  (global-set-key (kbd "M-m") 'compile)
   #+END_SRC
+
+  #+RESULTS:
+  : compile
 
   Code template binding - binding it to f7 to insert Python code template for now <2021-04-20 Tue>
   Will change for other languages later.
@@ -234,50 +272,49 @@
    #+END_SRC
    #+BEGIN_SRC emacs-lisp
 
-     (setq casey-makescript "build.bat")
-     (setq compilation-context-lines 0)
-     (setq compilation-error-regexp-alist
-         (cons '("^\\([0-9]+>\\)?\\(\\(?:[a-zA-Z]:\\)?[^:(\t\n]+\\)(\\([0-9]+\\)) : \\(?:fatal error\\|warnin\\(g\\)\\) C[0-9]+:" 2 3 nil (4))
-          compilation-error-regexp-alist))
+     ;; (setq casey-makescript "build.bat")
+     ;; (setq compilation-context-lines 0)
+     ;; (setq compilation-error-regexp-alist
+     ;;     (cons '("^\\([0-9]+>\\)?\\(\\(?:[a-zA-Z]:\\)?[^:(\t\n]+\\)(\\([0-9]+\\)) : \\(?:fatal error\\|warnin\\(g\\)\\) C[0-9]+:" 2 3 nil (4))
+     ;;      compilation-error-regexp-alist))
 
-     (defun find-project-directory-recursive ()
-       "Recursively search for a makefile."
-       (interactive)
-       (if (file-exists-p casey-makescript) t
-           (cd "../")
-           (find-project-directory-recursive)))
+     ;; (defun find-project-directory-recursive ()
+     ;;   "Recursively search for a makefile."
+     ;;   (interactive)
+     ;;   (if (file-exists-p casey-makescript) t
+     ;;       (cd "../")
+     ;;       (find-project-directory-recursive)))
 
-     (defun lock-compilation-directory ()
-       "The compilation process should NOT hunt for a makefile"
-       (interactive)
-       (setq compilation-directory-locked t)
-       (message "Compilation directory is locked."))
+     ;; (defun lock-compilation-directory ()
+     ;;   "The compilation process should NOT hunt for a makefile"
+     ;;   (interactive)
+     ;;   (setq compilation-directory-locked t)
+     ;;   (message "Compilation directory is locked."))
 
-     (defun unlock-compilation-directory ()
-       "The compilation process SHOULD hunt for a makefile"
-       (interactive)
-       (setq compilation-directory-locked nil)
-       (message "Compilation directory is roaming."))
+     ;; (defun unlock-compilation-directory ()
+     ;;   "The compilation process SHOULD hunt for a makefile"
+     ;;   (interactive)
+     ;;   (setq compilation-directory-locked nil)
+     ;;   (message "Compilation directory is roaming."))
 
-     (defun find-project-directory ()
-       "Find the project directory."
-       (interactive)
-       (setq find-project-from-directory default-directory)
-       (switch-to-buffer-other-window "*compilation*")
-       (if compilation-directory-locked (cd last-compilation-directory)
-       (cd find-project-from-directory)
-       (find-project-directory-recursive)
-       (setq last-compilation-directory default-directory)))
+     ;; (defun find-project-directory ()
+     ;;   "Find the project directory."
+     ;;   (interactive)
+     ;;   (setq find-project-from-directory default-directory)
+     ;;   (switch-to-buffer-other-window "*compilation*")
+     ;;   (if compilation-directory-locked (cd last-compilation-directory)
+     ;;   (cd find-project-from-directory)
+     ;;   (find-project-directory-recursive)
+     ;;   (setq last-compilation-directory default-directory)))
 
-     (defun make-without-asking ()
-       "Make the current build."
-       (interactive)
-       (if (find-project-directory) (compile casey-makescript))
-       (other-window 1))
-     (define-key global-map "\em" 'make-without-asking)
+     ;; (defun make-without-asking ()
+     ;;   "Make the current build."
+     ;;   (interactive)
+     ;;   (if (find-project-directory) (compile casey-makescript))
+     ;;   (other-window 1))
+     ;; (define-key global-map "\em" 'make-without-asking)
 
    #+END_SRC
-
    #+RESULTS:
    : make-without-asking
 
@@ -308,6 +345,11 @@
 
    (define-key asm-mode-map (kbd "<ret>") 'newline-and-ident)
    (define-key asm-mode-map (kbd "M-.") 'helm-etags-select)
+   #+END_SRC
+** HTML
+   #+BEGIN_SRC emacs-lisp
+     (require 'web-mode)
+     (add-to-list 'auto-mode-alist '("\\.html$" . web-mode))
    #+END_SRC
 * TODO rest
   #+BEGIN_SRC emacs-lisp
@@ -358,3 +400,8 @@
 
   #+RESULTS:
 * testing
+* read code ease
+** rgrep rebind
+   #+BEGIN_SRC emacs-lisp
+   (global-set-key (kbd "C-r") 'rgrep)
+   #+END_SRC
